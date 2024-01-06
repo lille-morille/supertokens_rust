@@ -1,3 +1,4 @@
+use crate::constants::{HEADER_API_KEY, HEADER_CDI_VERSION, HEADER_RID};
 use reqwest::header::{HeaderMap, HeaderValue};
 
 pub(crate) mod constants;
@@ -111,14 +112,14 @@ impl SuperTokens {
         let mut headers = HeaderMap::new();
 
         if let Some(recipe) = recipe {
-            headers.insert("rid", recipe.into());
+            headers.insert(HEADER_RID, recipe.into());
         }
 
         let api_key = HeaderValue::from_str(&self.api_key).expect("Should be valid");
-        headers.insert("api-key", api_key);
+        headers.insert(HEADER_API_KEY, api_key);
 
         let cdi_version = HeaderValue::from_str(&self.cdi_version).expect("Should be valid");
-        headers.insert("cdi-version", cdi_version);
+        headers.insert(HEADER_CDI_VERSION, cdi_version);
 
         headers
     }
@@ -139,6 +140,6 @@ impl From<Recipe> for HeaderValue {
             Recipe::ThirdParty => "thirdparty",
             Recipe::Jwt => "jwt",
         };
-        HeaderValue::from_str(rid).expect("Should be valid")
+        HeaderValue::from_str(rid).expect("No non-ASCII chars should be used")
     }
 }
