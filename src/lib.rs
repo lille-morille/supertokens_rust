@@ -1,7 +1,6 @@
 use reqwest::header::{HeaderMap, HeaderValue};
 
 pub(crate) mod constants;
-pub mod jwt;
 pub mod recipe;
 pub mod roles;
 
@@ -70,7 +69,7 @@ impl SuperTokens {
     /// let url = super_tokens.get_url("/recipe/user/metadata");
     /// // prints "localhost:8080/appid-public/recipe/user/metadata";
     /// ```
-    pub fn get_url(&self, endpoint: &str) -> String {
+    pub(crate) fn get_url(&self, endpoint: &str) -> String {
         // Make sure that we don't end up with double / in the url
         // TODO ask Jonathan for macro to catch this at compile time :)
         assert_ne!(endpoint.to_owned().chars().next().unwrap(), '/');
@@ -88,7 +87,7 @@ impl SuperTokens {
     /// let url = super_tokens.get_url_with_tenant("/recipe/user/metadata");
     /// assert_eq!(url, "/appid-public/public/recipe/user/metadata");
     /// ```
-    pub fn get_url_with_tenant(&self, endpoint: &str) -> String {
+    pub(crate) fn get_url_with_tenant(&self, endpoint: &str) -> String {
         // Make sure that we don't end up with double / in the url
         // TODO ask Jonathan for macro to catch this at compile time :)
         assert_ne!(endpoint.to_owned().chars().next().unwrap(), '/');
@@ -108,7 +107,7 @@ impl SuperTokens {
     /// let st = SuperTokens::default();
     /// let headers = st.get_headers(Some(Recipe::EmailPassword));
     /// ```
-    pub fn get_headers(&self, recipe: Option<Recipe>) -> HeaderMap {
+    pub(crate) fn get_headers(&self, recipe: Option<Recipe>) -> HeaderMap {
         let mut headers = HeaderMap::new();
 
         if let Some(recipe) = recipe {
@@ -125,7 +124,7 @@ impl SuperTokens {
     }
 }
 
-pub enum Recipe {
+pub(crate) enum Recipe {
     EmailPassword,
     PasswordLess,
     ThirdParty,
