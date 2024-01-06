@@ -1,5 +1,6 @@
 use crate::constants::{HEADER_API_KEY, HEADER_CDI_VERSION, HEADER_RID};
 use reqwest::header::{HeaderMap, HeaderValue};
+use reqwest::{Client, StatusCode};
 
 pub(crate) mod constants;
 pub mod recipe;
@@ -122,6 +123,20 @@ impl SuperTokens {
         headers.insert(HEADER_CDI_VERSION, cdi_version);
 
         headers
+    }
+
+    /// Sends a healthcheck request to the API, and returns true if it was successful
+    pub async fn health_check(&self) -> bool {
+        let resp = Client::new()
+            .get(self.get_url_with_tenant(""))
+            .headers(self.get_headers(None))
+            .send()
+            .await;
+
+        if let Ok(result) = resp {
+            return result.status() == StatusCode::OK;
+        }
+        false
     }
 }
 
